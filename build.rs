@@ -4,12 +4,12 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
-    /// List of grammar files with optional additional argument to be passed to the antlr tool
-    let grammars: Vec<&str, &str> = vec![("BinWords", None)];
+    // List of grammar files with optional additional argument to be passed to the antlr tool
+    let grammars: Vec<(&str, Option<&str>)> = vec![("BinWords", None)];
 
     let antlr_path = find_antlr_jar();
 
-    for (grammar, arg) in grammars.into_iter().zip(additional_args) {
+    for (grammar, arg) in grammars {
         if let Err(e) = gen_for_grammar(grammar, arg, &antlr_path) {
             panic!("Failed to generate parser for grammar '{}': {}", grammar, e);
         }
