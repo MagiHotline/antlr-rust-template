@@ -3,6 +3,21 @@ use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+fn main() {
+    /// List of grammar files with optional additional argument to be passed to the antlr tool
+    let grammars: Vec<&str, &str> = vec![("BinWords", None)];
+
+    let antlr_path = find_antlr_jar();
+
+    for (grammar, arg) in grammars.into_iter().zip(additional_args) {
+        if let Err(e) = gen_for_grammar(grammar, arg, &antlr_path) {
+            panic!("Failed to generate parser for grammar '{}': {}", grammar, e);
+        }
+    }
+
+    println!("cargo:rerun-if-changed=build.rs");
+}
+
 fn find_antlr_jar() -> PathBuf {
     // Check if the jar path env var is set
     println!("cargo:rerun-if-env-changed=ANTLR_JAR");
@@ -32,22 +47,6 @@ fn find_antlr_jar() -> PathBuf {
         and set the ANTLR_JAR environment variable to point to the complete jar file. \n\
         Example: export ANTLR_JAR=/path/to/antlr4-4.8-2-SNAPSHOT-complete.jar"
     );
-}
-
-fn main() {
-    let grammars = vec!["BinWords"];
-
-    let additional_args = vec![None];
-
-    let antlr_path = find_antlr_jar();
-
-    for (grammar, arg) in grammars.into_iter().zip(additional_args) {
-        if let Err(e) = gen_for_grammar(grammar, arg, &antlr_path) {
-            panic!("Failed to generate parser for grammar '{}': {}", grammar, e);
-        }
-    }
-
-    println!("cargo:rerun-if-changed=build.rs");
 }
 
 fn gen_for_grammar(
