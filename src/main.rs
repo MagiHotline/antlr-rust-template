@@ -1,5 +1,5 @@
-use antlr_rust::{InputStream, Parser, common_token_stream::CommonTokenStream, tree::ParseTree};
-use bin_words::parser::{binwordsparser::BinWordsParser, *};
+use antlr_rust::{InputStream, common_token_stream::CommonTokenStream};
+use bin_words::parser::{binwordslexer::BinWordsLexer, binwordsparser::BinWordsParser};
 
 fn main() {
     println!("Enter a string to parse:");
@@ -12,7 +12,7 @@ fn main() {
     let input = InputStream::new(input_string.trim());
 
     // Create a TokenSource from the CharStream using the BinWords grammar
-    let lexer = binwordslexer::BinWordsLexer::new(input);
+    let lexer = BinWordsLexer::new(input);
 
     // Obtain the tokens from the TokenSource as a TokenStream
     let tokens = CommonTokenStream::new(lexer);
@@ -21,5 +21,5 @@ fn main() {
     let mut parser = BinWordsParser::new(tokens);
 
     // Execute the grammar from the 'main' nonterminal symbol
-    let tree = parser.main();
+    let _tree = parser.main();
 }

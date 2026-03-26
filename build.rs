@@ -90,14 +90,17 @@ fn gen_for_grammar(
         );
     }
 
-    // Replace all inner attributes with outer attributes to fix the generated code for Rust 2024 edition
+    // Comment all inner allow attributes, they cannot be included by include! macro
     if let Ok(out_dir) = env::var("OUT_DIR") {
         for entry in std::fs::read_dir(out_dir).unwrap() {
             let path = entry.unwrap().path();
             if path.extension().and_then(|s| s.to_str()) == Some("rs") {
                 let content = std::fs::read_to_string(&path).unwrap();
-                if content.contains("#![") {
-                    let fixed_content = content.replace("#![", "#[");
+
+                // Only target the 'allow' attributes
+                if content.contains("#![allow(") {
+                    let fixed_content = content.replace("#![allow(", "// #![allow(");
+
                     std::fs::write(&path, fixed_content).unwrap();
                 }
             }
